@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Zone File Generator For FDNS</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #121212;
+            color: #33FF00; /* Hacker green text */
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #33FF00; /* Hacker green border */
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            color: #33FF00;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #33FF00;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px 0;
+            box-sizing: border-box;
+            border: 1px solid #33FF00;
+            border-radius: 3px;
+            background-color: #121212;
+            color: #33FF00;
+            font-size: 16px;
+        }
+        button {
+            padding: 15px 20px;
+            background-color: #33FF00;
+            color: #121212;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background-color: #2caa00; /* Darker green for hover effect */
+        }
+        .download-button {
+            padding: 15px 20px;
+            background-color: #5cb85c;
+            color: #121212;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+            font-size: 18px;
+        }
+        .download-button:hover {
+            background-color: #4cae4c;
+        }
+        #output {
+            background-color: #1a1a1a;
+            color: #33FF00;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #33FF00;
+            border-radius: 5px;
+            font-size: 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+    <div class="container">
+        <h2>FDNS Zone File Generator</h2>
+        <label for="origin">Domain:</label>
+        <input type="text" id="origin" placeholder="Enter domain" />
+        <label for="hostnames">Hostnames:</label>
+        <textarea id="hostnames" placeholder="Each Hostname per line"></textarea>
+        <label for="ips" >IP Addresses:</label>
+        <textarea id="ips" placeholder="Each IP address per line" ></textarea>
+        <button onclick="generateZoneFile()">Generate DNS Zone File</button>
+        <div id="output" class="output" style="display: none;"></div>
+        <button id="downloadButton" class="download-button" onclick="downloadZoneFile()">Download DNS Zone File</button>
+    </div>
+
+    <script>
+        function generateZoneFile() {
+            const originDomain = document.getElementById('origin').value.trim();
+            const hostnamesInput = document.getElementById('hostnames').value.trim().split('\n');
+            const ipsInput = document.getElementById('ips').value.trim().split('\n');
+            
+            // Validate if any field is empty
+            if (originDomain === '' || hostnamesInput === '' || ipsInput === '') {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            if (hostnamesInput.length !== ipsInput.length) {
+                alert('Number of hostnames and IP addresses should be equal.');
+                return;
+            }
+
+            let output = `$ORIGIN ${originDomain}.\n$TTL 300\n`;
+            for (let i = 0; i < hostnamesInput.length; i++) {
+                const hostnameParts = hostnamesInput[i].split('.');
+                const hostname = hostnameParts[0]; // Get the first part of the hostname
+                output += `${hostname} IN A ${ipsInput[i]}\n`;
+            }
+            document.getElementById('output').innerText = output;
+            document.getElementById('output').style.display = 'none';
+            document.getElementById('downloadButton').style.display = 'block';
+        }
+
+        function downloadZoneFile() {
+            const output = document.getElementById('output').innerText;
+            const domain = document.getElementById('origin').value.trim();
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${domain}.zone`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            // Reset the form
+            document.getElementById('hostnames').value = '';
+            document.getElementById('ips').value = '';
+            document.getElementById('origin').value = '';
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('output').style.display = 'none';
+            document.getElementById('downloadButton').style.display = 'none';
+        }
+
+        document.onkeydown = (e) => {
+            if (e.key == 123) {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key == 'I') {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key == 'C') {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.shiftKey && e.key == 'J') {
+                e.preventDefault();
+            }
+            if (e.ctrlKey && e.key == 'U') {
+                e.preventDefault();
+            }
+        };
+    </script>
+</body>
+</html>

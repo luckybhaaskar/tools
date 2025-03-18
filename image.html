@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets Image Viewer</title>
+    <style>
+        /* style.css */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1A1A1D;
+            color: #FF5C8D;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .title {
+            font-size: 3rem;
+            color: #00F5A0;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 300px;
+            font-size: 1.1rem;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #00F5A0;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #00F5A0;
+            border: none;
+            color: #333;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #00D287;
+        }
+
+        .image-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        img {
+            width: 80%;
+            max-width: 600px;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Assets Image Viewer</h1>
+        <div class="input-section">
+            <input type="text" id="domain" placeholder="Enter domain (e.g., multiplyproud.com)">
+            <input type="text" id="image-name" placeholder="Enter image name (e.g., 4164steellpim1.jpg)">
+            <button onclick="showImage()">Show Image</button>
+        </div>
+        <div class="image-container">
+            <img id="image" src="" alt="Image will be displayed here">
+        </div>
+    </div>
+
+    <script>
+        // On page load, check if domain is stored in localStorage and pre-fill the domain field
+        window.onload = function() {
+            const savedDomain = localStorage.getItem('domain');
+            if (savedDomain) {
+                document.getElementById("domain").value = savedDomain;
+            }
+        }
+
+        // Function to show the image and save the domain
+        function showImage() {
+            const domain = document.getElementById("domain").value;
+            const imageName = document.getElementById("image-name").value;
+            const imageUrl = `https://${domain}//10000/${imageName}`;
+            const imageElement = document.getElementById("image");
+
+            if (domain && imageName) {
+                // Save the domain to localStorage
+                localStorage.setItem('domain', domain);
+
+                imageElement.src = imageUrl;
+                imageElement.style.display = 'block'; // Show the image
+            } else {
+                alert("Please enter both the domain and image name.");
+            }
+        }
+    </script>
+</body>
+</html>

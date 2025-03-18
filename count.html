@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Count Duplicates in List - Full Version</title>
+    <!-- HTB Theme CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General page settings */
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 40px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #00FF00;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .btn {
+            background-color: #1a1a1a;
+            color: #00FF00;
+            border: 1px solid #444;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+        .btn:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+            background-color: #333;
+            color: #e6e6e6;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .output-options {
+            margin-top: 20px;
+            color: #e6e6e6;
+        }
+        .results {
+            margin-top: 20px;
+            color: #e6e6e6; /* Change text color to white for visibility */
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #222;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            font-family: 'Courier New', monospace;
+            color: #e6e6e6; /* Ensure the text is visible */
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); /* Add slight shadow to improve text visibility */
+        }
+        .copy-btn {
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        .sort-btn {
+            background-color: #1e1e1e;
+            color: #00FF00;
+            border: none;
+            margin: 5px;
+            font-size: 14px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .sort-btn:hover {
+            background-color: #333;
+        }
+        .header-btn {
+            color: #00FF00;
+            font-size: 16px;
+        }
+        .header-btn:hover {
+            color: #00e600;
+        }
+        .results-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .copy-btn, .download-btn, .clear-btn {
+            background-color: #333;
+            color: #00FF00;
+            border: 1px solid #444;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover, .download-btn:hover, .clear-btn:hover {
+            background-color: #444;
+        }
+        .copy-btn, .download-btn, .clear-btn {
+            font-size: 16px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Count Duplicates in List</h1>
+
+        <label for="inputList" class="header-btn">Enter your list (one item per line):</label>
+        <textarea id="inputList" placeholder="Enter items here..."></textarea>
+
+        <button onclick="countDuplicates()" class="btn btn-primary btn-block">Show Results</button>
+
+        <div class="output-options">
+            <label for="outputFormat" class="header-btn">Choose output format:</label>
+            <select id="outputFormat" class="form-control" onchange="countDuplicates()">
+                <option value="text">Text Format</option>
+                <option value="csv">CSV Format</option>
+                <option value="tab">Tab Delimited Format</option>
+            </select>
+
+            <div class="form-check">
+                <input type="checkbox" id="includeCounts" onchange="countDuplicates()" class="form-check-input">
+                <label for="includeCounts" class="form-check-label header-btn">Include ‘Counts’ Column</label>
+            </div>
+
+            <label class="header-btn">Values:</label>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="valueFilter" value="all" checked onchange="countDuplicates()"> All
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="valueFilter" value="duplicates" onchange="countDuplicates()"> Duplicates Only
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="valueFilter" value="withoutDuplicates" onchange="countDuplicates()"> Without Duplicates
+            </div>
+            <br>
+            <label class="header-btn">Sort by:</label>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="sortBy" value="count" checked onchange="countDuplicates()"> Sort by Count
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="sortBy" value="item" onchange="countDuplicates()"> Sort by Item
+            </div>
+            <br>
+            <label class="header-btn">Sort Order:</label>
+            <div class="form-check form-check-inline">
+                <button id="sortAscBtn" class="sort-btn" onclick="toggleSortOrder('asc')">Ascending</button>
+            </div>
+            <div class="form-check form-check-inline">
+                <button id="sortDescBtn" class="sort-btn" onclick="toggleSortOrder('desc')">Descending</button>
+            </div>
+        </div>
+
+        <div id="countInfo"></div>
+
+        <div class="results-container">
+            <div id="result" class="results"></div>
+        </div>
+
+        <div class="copy-btn">
+            <button id="copyButton" class="btn hidden" onclick="copyResults()">Copy Results to Clipboard</button>
+            <button id="downloadButton" class="btn hidden" onclick="downloadResults()">Download Results</button>
+            <button id="clearButton" class="btn hidden" onclick="clearInput()">Clear Input</button>
+        </div>
+    </div>
+
+    <script>
+        let sortOrder = 'asc'; // Default to ascending order
+
+        // Function to count duplicates and display results
+        function countDuplicates() {
+            const inputText = document.getElementById('inputList').value.trim();
+            const outputFormat = document.getElementById('outputFormat').value;
+            const includeCounts = document.getElementById('includeCounts').checked;
+            const valueFilter = document.querySelector('input[name="valueFilter"]:checked').value;
+            const sortBy = document.querySelector('input[name="sortBy"]:checked').value;
+
+            if (inputText === "") {
+                alert("Please enter some items in the list.");
+                return;
+            }
+
+            const items = inputText.split('\n').map(item => item.trim()).filter(item => item !== '');
+            const itemCounts = {};
+
+            // Count occurrences of each item
+            items.forEach(item => {
+                itemCounts[item] = (itemCounts[item] || 0) + 1;
+            });
+
+            let filteredItemCounts = {};
+
+            // Filter based on Duplicates Only, Without Duplicates, or All
+            if (valueFilter === 'duplicates') {
+                filteredItemCounts = Object.fromEntries(
+                    Object.entries(itemCounts).filter(([key, value]) => value > 1)
+                );
+            } else if (valueFilter === 'withoutDuplicates') {
+                filteredItemCounts = Object.fromEntries(
+                    Object.entries(itemCounts).filter(([key, value]) => value === 1)
+                );
+            } else {
+                filteredItemCounts = itemCounts;
+            }
+
+            // Sorting by count or item
+            let sortedCounts = Object.entries(filteredItemCounts);
+            if (sortBy === 'count') {
+                sortedCounts.sort((a, b) => sortOrder === 'asc' ? a[1] - b[1] : b[1] - a[1]);
+            } else {
+                sortedCounts.sort((a, b) => sortOrder === 'asc' ? a[0].localeCompare(b[0]) : b[0].localeCompare(a[0]));
+            }
+
+            let output = '';
+            if (outputFormat === 'text') {
+                sortedCounts.forEach(([item, count]) => {
+                    if (includeCounts) {
+                        output += `${item} - ${count}\n`;
+                    } else {
+                        output += `${item}\n`;
+                    }
+                });
+            } else if (outputFormat === 'csv') {
+                output += 'Item,Count\n';
+                sortedCounts.forEach(([item, count]) => {
+                    if (includeCounts) {
+                        output += `${item},${count}\n`;
+                    } else {
+                        output += `${item}\n`;
+                    }
+                });
+            } else if (outputFormat === 'tab') {
+                output += 'Item\tCount\n';
+                sortedCounts.forEach(([item, count]) => {
+                    if (includeCounts) {
+                        output += `${item}\t${count}\n`;
+                    } else {
+                        output += `${item}\n`;
+                    }
+                });
+            }
+
+            document.getElementById('result').innerHTML = `<pre>${output}</pre>`;
+
+            // Display additional info
+            const totalLines = items.length;
+            const uniqueValuesCount = Object.keys(filteredItemCounts).length;
+
+            const countInfo = `
+                <p>Total number of lines: <strong>${totalLines}</strong></p>
+                <p>Number of unique values: <strong>${uniqueValuesCount}</strong></p>
+            `;
+            document.getElementById('countInfo').innerHTML = countInfo;
+
+            // Show download and copy options
+            document.getElementById('copyButton').classList.remove('hidden');
+            document.getElementById('downloadButton').classList.remove('hidden');
+            document.getElementById('clearButton').classList.remove('hidden');
+        }
+
+        // Toggle sorting order
+        function toggleSortOrder(order) {
+            sortOrder = order;
+            document.getElementById('sortAscBtn').style.backgroundColor = (order === 'asc') ? '#333' : '#1e1e1e';
+            document.getElementById('sortDescBtn').style.backgroundColor = (order === 'desc') ? '#333' : '#1e1e1e';
+            countDuplicates();
+        }
+
+        // Function to download results
+        function downloadResults() {
+            const resultData = document.getElementById('result').innerText;
+            const blob = new Blob([resultData], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'duplicates_result.txt';
+            link.click();
+        }
+
+        // Function to copy results to clipboard
+        function copyResults() {
+            const resultText = document.getElementById('result').innerText;
+
+            // Create a temporary textarea to hold the text to be copied
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = resultText;
+            document.body.appendChild(tempTextArea);
+
+            // Select the text and copy it to clipboard
+            tempTextArea.select();
+            document.execCommand('copy');
+
+            // Remove the temporary textarea
+            document.body.removeChild(tempTextArea);
+
+            alert('Results copied to clipboard!');
+        }
+
+        // Function to clear input and reset
+        function clearInput() {
+            document.getElementById('inputList').value = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('countInfo').innerHTML = '';
+            document.getElementById('copyButton').classList.add('hidden');
+            document.getElementById('downloadButton').classList.add('hidden');
+            document.getElementById('clearButton').classList.add('hidden');
+        }
+    </script>
+
+</body>
+</html>
