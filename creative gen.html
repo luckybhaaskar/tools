@@ -1,0 +1,94 @@
+-<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Creative Generator</title>
+    <script>
+        function generateCreative() {
+            let randomId = () => Math.floor(Math.random() * 1000);
+            let contentLength = parseInt(document.getElementById("lengthInput").value) || 1000;
+            let additionalContent = "";
+
+            while (additionalContent.length < contentLength) {
+                additionalContent += `
+                    <div class="random-class-${randomId()}" style="display:none">&nbsp;</div>
+                    <span class="hidden-${randomId()}" style="display:none">&nbsp;</span>
+                    <marquee direction="left" style="display:none">&nbsp;</marquee>
+                    <hr style="display:none">
+                    <table border="${randomId() % 3}" style="display:none">
+                        <tr>
+                            <td>&nbsp;</td><td>&nbsp;</td>
+                        </tr>
+                    </table>
+                    <iframe src="about:blank" width="${randomId() % 50}" height="${randomId() % 50}" style="display:none"></iframe>
+                    <details style="display:none"><summary>&nbsp;</summary><p>&nbsp;</p></details>
+                    <ul style="display:none">
+                        <li>&nbsp;</li>
+                        <li>&nbsp;</li>
+                    </ul>
+                    <svg width="10" height="10" style="display:none">
+                        <circle cx="5" cy="5" r="5" fill="rgb(${randomId()}, ${randomId()}, ${randomId()})" />
+                    </svg>
+                    <div class="spacer-${randomId()}" style="display:none">&nbsp;</div>
+                `;
+            }
+
+            let baseTemplate = `
+                <html>
+                <head>
+                <title></title>
+                <style>
+                    .random-class-${randomId()} { 
+                        background-color: rgb(${randomId()}, ${randomId()}, ${randomId()});
+                        border: ${randomId() % 5}px solid rgb(${randomId()}, ${randomId()}, ${randomId()});
+                    }
+                    .hidden-${randomId()} { display: none; }
+                    .spacer-${randomId()} { padding: ${randomId() % 50}px; }
+                </style>
+                </head>
+                <body>
+                <center>
+                <table>
+                <a href="https://{domain}/{lpurl}">
+                <img src="https://{domain}/{lp_image}">
+                </a>
+                <br>
+                <a href="https://{domain}/{opurl}">
+                <img src="https://{domain}/{op_image}">
+                </a>
+                <br>
+                ${additionalContent}
+                If you wish to not receive any correspondence from us, please <a href="https://{domain}/{upurl}"> click here</a>
+                <img src="https://{domain}/{ipurl}" width="1" height="1" />
+                </table>
+                </center>
+                </body>
+                </html>
+            `;
+            document.getElementById("output").value = baseTemplate;
+        }
+        function copyToClipboard() {
+            let textarea = document.getElementById("output");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Copied to clipboard!");
+        }
+    </script>
+</head>
+<body style="background-color: #0d1117; color: #c9d1d9; font-family: 'Courier New', monospace; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center;">
+    <div style="width: 100%; padding: 20px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;">
+        <label for="lengthInput" style="font-size: 18px; color:  #12d43c; margin-right: 10px;">Content Length:</label>
+        <input type="number" id="lengthInput" min="1000" step="500" value="1000" 
+            style="background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 16px; padding: 5px 10px; margin-right: 10px;">
+        <button onclick="generateCreative()" style="background-color:  #12d43c; color: #0d1117; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer;">Generate HTML Creative</button>
+    </div>
+
+    <div style="margin-top: 20px; padding: 20px; background-color: #21262d; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: 80%; max-width: 900px; display: flex; justify-content: center;">
+        <textarea id="output" rows="20" style="background-color: #21262d; color: #c9d1d9; font-family: 'Courier New', monospace; border: 1px solid #30363d; padding: 10px; width: 100%; font-size: 14px; border-radius: 5px; resize: none;"></textarea>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; justify-content: center; width: 100%;">
+        <button onclick="copyToClipboard()" style="background-color: #12d43c; color: #0d1117; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer;">Copy to Clipboard</button>
+    </div>
+</body>
+
+</html>
