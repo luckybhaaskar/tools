@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Domain Generator</title>
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1c1e22;
+            color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #12d43c;
+            margin-top: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Button styles */
+        button {
+            padding: 15px 30px;
+            background-color: #067c20;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #cc7a00;
+        }
+
+        /* Inputs styling */
+        input[type="number"], input[type="checkbox"] {
+            background-color: #2a2b2f;
+            color: #f2f2f2;
+            border: 2px solid #444;
+            padding: 10px;
+            font-size: 1em;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        input[type="number"] {
+            width: 50px;
+        }
+
+        /* Container styling */
+        .inputs {
+            margin-top: 20px;
+        }
+
+        .input-container {
+            margin-bottom: 15px;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #30b806;
+            word-wrap: break-word;
+        }
+
+        /* Extend container for better spacing */
+        #extensionOptions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .checkbox-group {
+            text-align: left;
+        }
+        
+        /* For responsiveness */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            button {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+
+            .inputs {
+                padding: 10px;
+            }
+
+            .result {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Domain Generator</h1>
+
+    <label for="domainCount">How many domains do you want to generate?</label><br>
+    <input type="number" id="domainCount" min="1" placeholder="Enter number of domains">
+
+    <div id="extensionOptions" class="inputs">
+        <label for="extensions">Choose domain extensions:</label><br>
+        <input type="checkbox" id="com" checked> .com
+        <input type="checkbox" id="net"> .net
+        <input type="checkbox" id="org"> .org
+        <input type="checkbox" id="co"> .co
+        <input type="checkbox" id="ai"> .ai
+        <input type="checkbox" id="tech"> .tech
+        <br><br>
+    </div>
+
+    <div id="domainInputs" class="inputs"></div>
+
+    <button onclick="generateDomains()">Generate Domains</button>
+
+    <div id="domainResults" class="result"></div>
+
+    <script>
+        // Professional words and industries for meaningful domains
+        const professionalWords = [
+    "Solutions", "Consulting", "Systems", "Technologies", "Partners", 
+    "Enterprises", "Global", "Innovations", "Network", "Group", 
+    "Digital", "Experts", "Consultants", "Services", "Strategic", 
+    "Tech", "Dynamics", "Holdings", "Development", "Management", 
+    "Operations", "Analytics", "Integration", "Ventures", "Capital", 
+    "Business", "Corporate", "Platform", "Software", "Hardware", 
+    "Cloud", "Data", "AI", "MachineLearning", "Blockchain", 
+    "Automation", "Cybersecurity", "Infrastructure", "Logistics", 
+    "Marketing", "Sales", "Finance", "Investment", "Banking", 
+    "Legal", "Compliance", "Governance", "Risk", "Strategy", 
+    "Transformation", "Optimization", "Efficiency", "Productivity", 
+    "Collaboration", "Communication", "Outsourcing", "Offshoring", 
+    "Research", "Development", "Engineering", "Design", "Creative", 
+    "Media", "Advertising", "Branding", "Customer", "Client", 
+    "User", "Experience", "Interface", "Mobile", "Web", 
+    "Application", "Database", "Server", "Hosting", "Storage", 
+    "Backup", "Recovery", "Support", "Maintenance", "Upgrade", 
+    "Migration", "Deployment", "Implementation", "Training", 
+    "Workshop", "Seminar", "Conference", "Summit", "Forum", 
+    "Alliance", "Association", "Foundation", "Institute", "Academy", 
+    "University", "Education", "Learning", "Knowledge", "Wisdom", 
+    "Insights", "Intelligence", "Reports", "CaseStudy", "WhitePaper", 
+    "Framework", "Methodology", "Process", "Workflow", "Pipeline", 
+    "Agile", "Scrum", "Waterfall", "Lean", "SixSigma", 
+    "Benchmark", "Metrics", "KPI", "ROI", "Growth", 
+    "Expansion", "Market", "Industry", "Sector", "Vertical", 
+    "Horizontal", "B2B", "B2C", "C2C", "Startup", "Scaleup", 
+    "Enterprise", "SME", "Midmarket", "Multinational", "Conglomerate", 
+    "Subsidiary", "Division", "Department", "Unit", "Team", 
+    "Leadership", "Executive", "Director", "Manager", "Supervisor", 
+    "Specialist", "Analyst", "Architect", "Developer", "Engineer", 
+    "Consultant", "Advisor", "Coach", "Mentor", "Trainer", 
+    "Facilitator", "Moderator", "Speaker", "Author", "Editor", 
+    "Journalist", "Reporter", "Producer", "Designer", "Artist", 
+    "Content", "Copy", "Script", "Storyboard", "Wireframe", 
+    "Prototype", "Mockup", "Layout", "Template", "Theme", 
+    "Plugin", "Extension", "Addon", "Module", "Component", 
+    "Library", "Framework", "Toolkit", "SDK", "API", 
+    "Integration", "Middleware", "Gateway", "Interface", "Protocol", 
+    "Standard", "Compliance", "Certification", "Accreditation", "License", 
+    "Regulation", "Policy", "Guideline", "Procedure", "BestPractice", 
+    "Ethics", "Sustainability", "CSR", "Diversity", "Inclusion", 
+    "Equity", "Belonging", "Wellbeing", "Health", "Safety", 
+    "Environment", "Green", "Renewable", "Energy", "Efficiency", 
+    "Carbon", "Footprint", "Offset", "Recycle", "Upcycle", 
+    "Circular", "Economy", "SupplyChain", "Procurement", "Sourcing", 
+    "Vendor", "Supplier", "Distributor", "Reseller", "Retailer", 
+    "Wholesale", "Franchise", "Licensee", "Partner", "Affiliate", 
+    "Channel", "Direct", "Indirect", "Online", "Offline", 
+    "Ecommerce", "Marketplace", "Platform", "Aggregator", "Subscription", 
+    "Membership", "Loyalty", "Rewards", "Gamification", "Engagement", 
+    "Retention", "Churn", "LifetimeValue", "Upsell", "Crossell", 
+    "Bundle", "Discount", "Promotion", "Campaign", "Launch", 
+    "Event", "Webinar", "Podcast", "Blog", "Newsletter", 
+    "Social", "Media", "Community", "Forum", "Group", 
+    "Influencer", "Ambassador", "Advocate", "Referral", "Testimonial", 
+    "Review", "Rating", "Feedback", "Survey", "Poll", 
+    "Questionnaire", "Interview", "FocusGroup", "Usability", "Accessibility", 
+    "Inclusion", "Design", "Thinking", "Innovation", "Ideation", 
+    "Brainstorming", "Workshop", "Hackathon", "Incubator", "Accelerator", 
+    "Venture", "Angel", "Investor", "Funding", "Grant", 
+    "Loan", "Equity", "Debt", "Crowdfunding", "ICO", 
+    "Token", "NFT", "Metaverse", "Web3", "DeFi", 
+    "Crypto", "Blockchain", "SmartContract", "DAO", "DApp", 
+    "Wallet", "Exchange", "Mining", "Staking", "Yield", 
+    "Farming", "Liquidity", "Pool", "Index", "Fund", 
+    "ETF", "Stock", "Bond", "Commodity", "Future", 
+    "Option", "Derivative", "Hedge", "Portfolio", "Diversification", 
+    "Asset", "Liability", "Balance", "Sheet", "Income", 
+    "Statement", "Cashflow", "Profit", "Loss", "Revenue", 
+    "Expense", "Margin", "Gross", "Net", "EBITDA", 
+    "Amortization", "Depreciation", "Tax", "Audit", "Accounting", 
+    "Bookkeeping", "Payroll", "Invoice", "Receipt", "Payment", 
+    "Transaction", "Settlement", "Clearing", "Reconciliation", "Forex", 
+    "Currency", "Exchange", "Rate", "Interest", "APR", 
+    "APY", "Compound", "Principal", "Maturity", "Default", 
+    "Credit", "Score", "Report", "History", "Debt", 
+    "Loan", "Mortgage", "Lease", "Rent", "Buy", 
+    "Sell", "Trade", "Import", "Export", "Tariff", 
+    "Duty", "Customs", "Regulation", "Compliance", "Sanction", 
+    "Embargo", "Ban", "Restriction", "Quota", "Subsidy", 
+    "Incentive", "Grant", "Award", "Prize", "Contest", 
+    "Competition", "Challenge", "Hackathon", "Pitch", "Deck", 
+    "Proposal", "Contract", "Agreement", "Term", "Condition", 
+    "Clause", "Amendment", "Renewal", "Termination", "Breach", 
+    "Lawsuit", "Arbitration", "Mediation", "Settlement", "Judgment", 
+    "Court", "Judge", "Jury", "Verdict", "Appeal", 
+    "Supreme", "Federal", "State", "Local", "Municipal", 
+    "Government", "Agency", "Department", "Bureau", "Commission", 
+    "Committee", "Council", "Board", "Assembly", "Senate", 
+    "Congress", "Parliament", "Ministry", "Cabinet", "Administration", 
+    "Election", "Vote", "Campaign", "Candidate", "Party", 
+    "Policy", "Law", "Act", "Bill", "Statute", 
+    "Ordinance", "Decree", "Executive", "Order", "Directive", 
+    "Regulation", "Rule", "Guideline", "Standard", "Framework", 
+    "Convention", "Treaty", "Pact", "Alliance", "Union", 
+    "Federation", "Confederation", "Coalition", "Bloc", "League", 
+    "Association", "Society", "Club", "Guild", "Union", 
+    "Syndicate", "Cartel", "Monopoly", "Oligopoly", "Competition", 
+    "Antitrust", "Merger", "Acquisition", "Takeover", "Buyout", 
+    "Divestiture", "SpinOff", "Split", "IPO", "Public", 
+    "Private", "Venture", "Startup", "Scaleup", "Enterprise", 
+    "SMB", "Midmarket", "Corporate", "Conglomerate", "Holding", 
+    "Subsidiary", "Division", "Branch", "Office", "HQ", 
+    "Remote", "Hybrid", "Office", "Workspace", "Coworking", 
+    "Facility", "Plant", "Factory", "Warehouse", "Distribution", 
+    "Logistics", "Supply", "Chain", "Procurement", "Sourcing", 
+    "Vendor", "Supplier", "Manufacturer", "Producer", "OEM", 
+    "ODM", "WhiteLabel", "PrivateLabel", "Brand", "Trademark", 
+    "Patent", "Copyright", "IP", "Intellectual", "Property", 
+    "Royalty", "License", "Franchise", "Dealership", "Agency", 
+    "Broker", "Agent", "Representative", "Distributor", "Reseller", 
+    "Retailer", "Wholesaler", "Merchant", "Store", "Shop", 
+    "Outlet", "Mall", "Market", "Bazaar", "Ecommerce", 
+    "Marketplace", "Platform", "Aggregator", "Exchange", "Auction", 
+    "Bidding", "Negotiation", "Deal", "Transaction", "Purchase", 
+    "Sale", "Lease", "Rent", "Subscription", "Membership", 
+    "Loyalty", "Rewards", "Points", "Miles", "Cashback", 
+    "Discount", "Coupon", "Voucher", "Gift", "Card", 
+    "Credit", "Debit", "Prepaid", "Bank", "Account", 
+    "Savings", "Checking", "Deposit", "Withdrawal", "Transfer", 
+    "Wire", "ACH", "Payment", "Processor", "Gateway", 
+    "Merchant", "Acquirer", "Issuer", "Network", "Visa", 
+    "Mastercard", "Amex", "Discover", "UnionPay", "PayPal", 
+    "Stripe", "Square", "Venmo", "Zelle", "Cash", 
+    "App", "Bitcoin", "Ethereum", "Crypto", "Wallet", 
+    "Exchange", "Trade", "Buy", "Sell", "HODL", 
+    "FOMO", "FUD", "Moon", "Lambo", "WAGMI", 
+    "NGMI", "DYOR", "NFA", "GM", "GN", 
+    "Ser", "Wen", "Airdrop", "ICO", "IDO", 
+    "IEO", "STO", "NFT", "DeFi", "GameFi", 
+    "SocialFi", "Web3", "Metaverse", "VR", "AR", 
+    "XR", "AI", "ML", "DL", "NLP", 
+    "CV", "IoT", "5G", "6G", "WiFi", 
+    "Bluetooth", "NFC", "RFID", "GPS", "Satellite", 
+    "ISP", "DNS", "VPN", "Proxy", "Tor", 
+    "Firewall", "Antivirus", "Malware", "Phishing", "Ransomware", 
+    "Cyberattack", "Breach", "Leak", "Hack", "Exploit", 
+    "Patch", "Update", "Upgrade", "Migration", "Backup", 
+    "Recovery", "Disaster", "BCP", "DRP", "HA", 
+    "Redundancy", "Failover", "Load", "Balancing", "Cluster", 
+    "Grid", "Cloud", "Hosting", "Server", "VPS", 
+    "Dedicated", "Colocation", "Data", "Center", "Edge", 
+    "Computing", "Serverless", "Lambda", "Function", "Microservice", 
+    "API", "REST", "GraphQL", "gRPC", "Webhook", 
+    "Websocket", "MQTT", "PubSub", "Kafka", "RabbitMQ", 
+    "Database", "SQL", "NoSQL", "MySQL", "PostgreSQL", 
+    "MongoDB", "Redis", "Elasticsearch", "Cassandra", "DynamoDB", 
+    "Bigtable", "Spanner", "Cosmos", "Neo4j", "ArangoDB", 
+    "OrientDB", "Couchbase", "CouchDB", "Riak", "Memcached", 
+    "InfluxDB", "Timescale", "Prometheus", "Grafana", "Kibana", 
+    "Logstash", "Fluentd", "Splunk", "Datadog", "NewRelic", 
+    "AppDynamics", "Dynatrace", "Sentry", "Rollbar", "Bugsnag", 
+    "Raygun", "Airbrake", "Honeybadger", "Scout", "Librato", 
+    "SignalFx", "Wavefront", "Thundra", "IOpipe", "Epsagon", 
+    "Lumigo", "Dashbird", "Stackery", "Claudia", "Serverless", 
+    "Framework", "SAM", "Terraform", "Pulumi", "Crossplane", 
+    "Ansible", "Chef", "Puppet", "Salt", "CFEngine", 
+    "Bash", "Shell", "Zsh", "Fish", "PowerShell", 
+    "Python", "Ruby", "Perl", "PHP", "Node", 
+    "Deno", "Go", "Rust", "Java", "Kotlin", 
+    "Scala", "Groovy", "Clojure", "Ceylon", "Swift", 
+    "ObjectiveC", "C", "Cpp", "Csharp", "Fsharp", 
+    "VB", "Delphi", "Pascal", "Fortran", "Cobol", 
+    "Lisp", "Scheme", "Racket", "Haskell", "OCaml", 
+    "Erlang", "Elixir", "Julia", "Dart", "Nim", 
+    "Crystal", "Zig", "V", "Odin", "Jai", 
+    "Carbon", "Mojo", "Koka", "Futhark", "Idris", 
+    "Agda", "Coq", "Lean"
+    ];
+
+        const industries = [
+            "Finance", "Healthcare", "Marketing", "Engineering", "Education", "Tech", "AI", "Consulting", "Legal", "Retail"
+        ];
+
+        function generateDomains() {
+            const domainCount = parseInt(document.getElementById("domainCount").value);
+            const selectedExtensions = getSelectedExtensions();
+
+            if (!domainCount || domainCount <= 0) {
+                alert("Please enter a valid number of domains!");
+                return;
+            }
+
+            const domainInputs = [];
+            for (let i = 0; i < domainCount; i++) {
+                const inputField = document.getElementById(`input-${i}`);
+                const customWord = inputField ? inputField.value.trim() : "";
+                domainInputs.push(customWord || getRandomProfessionalWord());
+            }
+
+            const domains = [];
+            for (let i = 0; i < domainCount; i++) {
+                const word = domainInputs[i];
+                const randomExtension = selectedExtensions[Math.floor(Math.random() * selectedExtensions.length)];
+                const domainName = word + generateRandomString() + "." + randomExtension;
+                domains.push(domainName);
+            }
+
+            displayDomains(domains);
+        }
+
+        function getSelectedExtensions() {
+            const extensions = [];
+            if (document.getElementById("com").checked) extensions.push("com");
+            if (document.getElementById("net").checked) extensions.push("net");
+            if (document.getElementById("org").checked) extensions.push("org");
+            if (document.getElementById("co").checked) extensions.push("co");
+            if (document.getElementById("ai").checked) extensions.push("ai");
+            if (document.getElementById("tech").checked) extensions.push("tech");
+            return extensions;
+        }
+
+        function generateRandomString() {
+    const words = [
+        "Pro",
+"Tech",
+"Max",
+"Nova",
+"Next",
+"Sync",
+"Core",
+"Alpha",
+"Beta",
+"Data",
+"Go",
+"Lab",
+"Edge",
+"Vibe",
+"Point",
+"Innov",
+"Vantage",
+"Shift",
+"Flow",
+"Quantum",
+"Boost",
+"Spark",
+"Pulse",
+"Nex",
+"Strive",
+"Flex",
+"Drive",
+"Prime",
+"Zenith",
+"Byte",
+"Hive",
+"Swift",
+"Logic",
+"Peak",
+"Lens",
+"Tron",
+"Motive",
+"Glide",
+"Halo",
+"Apex",
+"Bolt",
+"Rise",
+"Terra",
+"Fusion",
+"Pivot",
+"Moment",
+"Lumen",
+"Echo",
+"Orbit",
+"Vortex",
+"Nimbus",
+"Titan",
+"Vector",
+"Phase",
+"Surge",
+"Optix",
+"Neon",
+"Cipher",
+"Rift",
+"Pylon",
+"Flux",
+"Mirage",
+"Infra",
+"Tempo",
+"Lattice",
+"Helix",
+"Nexa",
+"Kinet",
+"Aero",
+"Stride",
+"Pico",
+"Torus",
+"Dynamo",
+"Lynx",
+"Quanta",
+"Prism",
+"Plex",
+"Vista",
+"Jolt",
+"Mesa",
+"Tide",
+"Fathom",
+"Onyx",
+"Crest",
+"Sprint",
+"Nebula",
+"Rover",
+"Ion",
+"Coda",
+"Trek",
+"Vexel",
+"Zeta",
+"Rift",
+"Glyph",
+"Mythos",
+"Talon",
+"Eon",
+"Kairo",
+"NovaX",
+"Vyper"
+    ];
+
+    // Randomly choose two words from the list to form a "meaningful" string
+    const firstWord = words[Math.floor(Math.random() * words.length)];
+    const secondWord = words[Math.floor(Math.random() * words.length)];
+
+    // Combine them for a more professional and meaningful random string
+    return firstWord + secondWord;
+
+        }
+
+        function getRandomProfessionalWord() {
+            return professionalWords[Math.floor(Math.random() * professionalWords.length)];
+        }
+
+ 
+    function displayDomains(domains) {
+        const resultDiv = document.getElementById("domainResults");
+        resultDiv.innerHTML = `
+            <h3 style="text-transform: uppercase; margin: 0;">generated domain names:</h3>
+            <ul style="list-style-type: none; padding: 0; margin: 0;">
+        `;
+
+        domains.forEach(function(domain) {
+            resultDiv.innerHTML += `<li style="list-style-type: none; text-transform: lowercase; margin: 5px 0; padding-left: 0; display: block;color:white;">${domain}</li>`;
+        });
+
+        resultDiv.innerHTML += "</ul>";
+    }
+
+
+
+        document.getElementById("domainCount").addEventListener("input", function() {
+            const count = parseInt(this.value);
+            const domainInputsDiv = document.getElementById("domainInputs");
+            domainInputsDiv.innerHTML = ""; // Clear previous inputs
+
+            if (count && count > 0) {
+                for (let i = 0; i < count; i++) {
+                    domainInputsDiv.innerHTML += `
+                        <div class="input-container">
+                            <label for="input-${i}">Domain ${i + 1} (optional):</label>
+                            <input type="text" id="input-${i}" placeholder="Enter a keyword for domain ${i + 1}">
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
