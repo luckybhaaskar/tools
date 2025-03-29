@@ -1,5 +1,5 @@
 X-Mailer: {rand}
-X-campaignid: {rand}_{num}_{num}_{num}
+X-campaignid: {rand}_{num}_{rand}_{num}
 X-fbzpid: {num}
 X-fbzdb: {rand}{num}
 X-OriginalArrivalTime: {timestamp} (UTC) FILETIME=[{rand}:{rand}]
@@ -9,11 +9,11 @@ X-Subscription: Subscribed on {timestamp}, via {rand}
 X-Mailer: {rand}
 X-Campaign-ID: {num}
 X-Message-ID: {rand}
-X-Feedback-ID: {num}:{num}:{num}:{rand}
+X-Feedback-ID: {num}:{rand}:{num}:{rand}
 X-Kmail-Account: {rand}
 X-Kmail-Message: {rand}
 X-Kmail-Ops: {rand}
-X-Report-Abuse: Please report any spam or abuse to: {to}
+X-Report-Abuse: Please report any spam or abuse to: {fromemail}
 X-SG-EID: {rand}
 X-SG-ID: {rand}
 X-Entity-ID: {num}{rand}/{rand}==
