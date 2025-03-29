@@ -1,0 +1,68 @@
+X-Mailer: {rand}
+X-campaignid: {rand}_{num}_{num}_{num}
+X-fbzpid: {num}
+X-fbzdb: {rand}{num}
+X-OriginalArrivalTime: {timestamp} (UTC) FILETIME=[{rand}:{rand}]
+X-AWMessage: {rand}-{rand}-{rand}-{rand}-{rand}
+X_Id: {num}:{timestamp}:jeffreymkatz@yahoo.com
+X-Subscription: Subscribed on {timestamp}, via {rand}
+X-Mailer: {rand}
+X-Campaign-ID: {num}
+X-Message-ID: {rand}
+X-Feedback-ID: {num}:{num}:{num}:{rand}
+X-Kmail-Account: {rand}
+X-Kmail-Message: {rand}
+X-Kmail-Ops: {rand}
+X-Report-Abuse: Please report any spam or abuse to: {to}
+X-SG-EID: {rand}
+X-SG-ID: {rand}
+X-Entity-ID: {num}{rand}/{rand}==
+X-Campaign: {num}/{num}/{num}
+X-Campaign-Shard: {num}
+X-Report-Abuse: {fromemail}
+X-EBS: {fromemail}
+X-SES-Outgoing: {timestamp}
+X-Proofpoint-Virus-Version: vendor={rand}
+X-House-Vendor-Seg: unmanaged
+X-Envelope-From: "{from}"
+X-IQCropID: {num}.{num}.{num}.{num}
+X-SFMC-Stack: 4
+x-job: {num}_{num} 
+X-Mailgun-Sending-Ip-Pool-Name: {rand}
+X-Mailgun-Sending-Ip-Pool: 
+X-Mailgun-Sid: {rand}
+X-Mailgun-Tag: x.{rand}.{rand}.0.{rand}.{rand}.{rand}.{rand}.1enn
+X-Mailgun-Track: false
+X-Entity-ID: {rand}.{rand}==
+X-EMarSys-Identify: {num}_{num}_{num}
+X-EMarSys-Environment: {rand}
+X-Report-Abuse: Please report abuse here: {fromemail}
+X-Originating-Ip: {ip}
+x-Clientid-RD66BH92DN81: {rand}
+x-subid: {num}
+x-header_mtaid: {num}
+X-rpcampaign: {rand}-{num}
+x-fbl: jw-{num}.{num}.10
+X-xsMessageId: {rand}_{rand}_{num}
+X-Mailer-LID: {num}
+X-Mailer-SID: {num}
+X-xsMailingId: jw-{num}
+X-Mailer-Sent-By: 36
+X-Message-Reference: {rand}
+X-RPCampaign: {rand}
+X-Mailgun-Sending-Ip-Pool-Name: 
+X-Mailgun-Sending-Ip-Pool: 
+X-Mailgun-Sid: {rand}==
+X-Sp-Message-Id: {rand}
+X-PS-FBL: {rand}==
+X-MSFBL: EFurD+{rand}/{rand}=|{rand}=
+X-DKIM-Options: s={rand}
+X-Virtual-Mta: {fromemail}
+X-250ok-CID: {num}-{num}
+X-Sending-Engine: {rand}
+X-Report-Abuse: Please report abuse to {fromemail}
+X-mid: {rand}=
+X-Sent-Via: aws-api-shared-aws
+X-Job: {domain}-{rand}
+X-Instance: {rand}.{rand}
+X-SES-Outgoing: {timestamp}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTB Email Header Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0d0d12;
+            color: #9fef00;
+            font-family: 'Courier New', monospace;
+            background-image: url('https://www.hackthebox.com/images/htb-bg.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(13, 13, 18, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(159, 239, 0, 0.3);
+            border: 1px solid #9fef00;
+        }
+        button {
+            background-color: #9fef00;
+            color: #0d0d12;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background-color: #7bc700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(159, 239, 0, 0.4);
+        }
+        textarea {
+            background-color: #0d0d12;
+            color: #9fef00;
+            border: 1px solid #9fef00;
+            font-family: 'Courier New', monospace;
+        }
+        h1 {
+            color: #9fef00;
+            text-shadow: 0 0 10px rgba(159, 239, 0, 0.5);
+            border-bottom: 2px solid #9fef00;
+            padding-bottom: 10px;
+        }
+        label {
+            color: #9fef00;
+            margin-top: 10px;
+            display: block;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #0d0d12;
+            border: 1px solid #9fef00;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-2xl mb-4"> Email Header Generator</h1>
+        <p class="mb-4 text-sm">// Generate realistic email headers</p>
+
+        <label>Content-Transfer-Encoding:</label>
+        <div class="mb-4">
+            <label><input type="checkbox" name="encoding" value="7bit"> 7bit</label>
+            <label><input type="checkbox" name="encoding" value="8bit"> 8bit</label>
+            <label><input type="checkbox" name="encoding" value="base64"> base64</label>
+            <label><input type="checkbox" name="encoding" value="quoted-printable"> Quoted-Printable</label>
+        </div>
+
+        <label>Select X-Parameters:</label>
+        <div class="dropdown mb-4">
+            <button class="w-full">Select X-Parameters</button>
+            <div class="dropdown-content" id="xParamCheckboxes"></div>
+        </div>
+
+        <div class="flex mb-4">
+            <button id="randomizeButton" class="flex-1">Generate Header</button>
+            <button id="randomizeValuesButton" class="flex-1">Randomize Values</button>
+        </div>
+
+        <textarea id="generatedHeader" rows="15" class="w-full mt-4 p-2" placeholder="Generated header will appear here..."></textarea>
+        
+    </div>
+
+    <script>
+        let randData = [], numData = [], alphaData = [], xParamData = [];
+
+        // HTB-themed placeholder data if files aren't available
+        const htbDomains = ['elon.local'];
+        const htbNames = ['admin'];
+        const htbServers = ['mail'];
+        
+        fetch('keywords/rand/randvalues.txt').then(res => res.text()).then(data => randData = data.split('\n').filter(line => line.trim() !== '')).catch(() => {
+            randData = ['flag'];
+        });
+        
+        fetch('keywords/num/numvalues.txt').then(res => res.text()).then(data => numData = data.split('\n').filter(line => line.trim() !== '')).catch(() => {
+            numData = ['1337', '31337', '8080', '8443', '9001', '12345', '54321', '999', '666', '42'];
+        });
+        
+        fetch('keywords/alpha/alphavalues.txt').then(res => res.text()).then(data => alphaData = data.split('\n').filter(line => line.trim() !== '')).catch(() => {
+            alphaData = ['Challenge'];
+        });
+        
+        fetch('x-parameters.txt').then(res => res.text()).then(data => {
+            xParamData = data.split('\n').filter(line => line.trim() !== '');
+            const xParamCheckboxes = document.getElementById('xParamCheckboxes');
+            xParamData.forEach(param => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" name="xParam" value="${param}"> ${param}`;
+                xParamCheckboxes.appendChild(label);
+            });
+        }).catch(() => {
+            xParamData = [
+                'X-Flag: {rand}'
+    
+            ];
+            const xParamCheckboxes = document.getElementById('xParamCheckboxes');
+            xParamData.forEach(param => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" name="xParam" value="${param}"> ${param}`;
+                xParamCheckboxes.appendChild(label);
+            });
+        });
+
+        const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const generateMessageID = () => {
+  const symbols = ['-', '.', '_', '/'];
+  const allParts = [...randData, ...numData, ...alphaData]; // Combine all possible parts
+  
+  // Randomly decide how many segments (3-7) and build the pattern
+  const segmentCount = 3 + Math.floor(Math.random() * 15); // 3 to 7 segments
+  let pattern = '';
+
+  for (let i = 0; i < segmentCount; i++) {
+    pattern += getRandom(allParts); // Random part (rand/num/alpha)
+    if (i < segmentCount - 1) {
+      pattern += getRandom(symbols); // Add separator unless last segment
+    }
+  }
+
+  // Add a random HTB domain
+  pattern += `@{domain}`;
+  return `<${pattern}>`;
+};
+
+        const generateHeader = () => {
+            const encodingOptions = document.querySelectorAll('input[name="encoding"]:checked');
+            const encoding = encodingOptions.length > 0 ? 
+                Array.from(encodingOptions).map(e => e.value).join(', ') : 
+                getRandom(['7bit', '8bit', 'base64', 'quoted-printable']);
+
+            const xParamOptions = document.querySelectorAll('input[name="xParam"]:checked');
+            const selectedParams = xParamOptions.length > 0 ? 
+                Array.from(xParamOptions).map(option => option.value) : 
+                [getRandom(xParamData)];
+                
+            const timestamp = new Date().toUTCString();
+            const messageID = generateMessageID();
+            const fromName = getRandom(htbNames);
+            const toName = getRandom(htbNames);
+            const server = getRandom(htbServers);
+
+            const headerLines = [
+                `Reply-To: "{from}" <{mailfrom}>`,
+                `Date: {timestamp}`,
+                `Message-ID: ${messageID}`,
+                `MIME-Version: 1.0`,
+                `Content-Transfer-Encoding: ${encoding}`,
+                `From: "{from}" <{fromemail}>`,
+                `Subject: {sub}`,
+                `Content-Type: text/html; charset="UTF-8"`,
+                `To: {to}`,
+                `Content-Length: ${getRandom(numData)}`,
+                ...selectedParams.map(param => param
+                    .replace(/{num}/g, getRandom(numData))
+                    .replace(/{rand}/g, getRandom(randData))
+                    .replace(/{alpha}/g, getRandom(alphaData))
+                )
+            ];
+
+            // Randomize the order of lines but keep some logical structure
+            const requiredFirstLines = headerLines.slice(0, 5);
+            const remainingLines = headerLines.slice(5);
+            for (let i = remainingLines.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [remainingLines[i], remainingLines[j]] = [remainingLines[j], remainingLines[i]];
+            }
+            const randomizedHeader = [...requiredFirstLines, ...remainingLines];
+
+            document.getElementById('generatedHeader').value = randomizedHeader.join('\n');
+        }
+
+        const randomizeValues = () => {
+            generateHeader();
+        }
+
+        document.getElementById('randomizeButton').addEventListener('click', generateHeader);
+        document.getElementById('randomizeValuesButton').addEventListener('click', randomizeValues);
+
+        // Generate a header on page load
+        window.addEventListener('load', () => {
+            // Check some checkboxes by default
+            document.querySelector('input[value="base64"]').checked = false;
+            document.querySelectorAll('input[name="xParam"]')[2].checked = false;
+            document.querySelectorAll('input[name="xParam"]')[5].checked = false;
+            generateHeader();
+        });
+        const xParamContainer = document.getElementById('xParamCheckboxes');
+        
+        xParams.forEach(param => {
+            const label = document.createElement('label');
+            label.classList.add('block', 'px-2', 'py-1');
+            label.innerHTML = `<input type="checkbox" value="${param}"> ${param}`;
+            xParamContainer.appendChild(label);
+        });
+    </script>
+</body>
+</html>
