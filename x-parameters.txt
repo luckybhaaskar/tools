@@ -4,7 +4,7 @@ X-fbzpid: {num}
 X-fbzdb: {rand}{num}
 X-OriginalArrivalTime: {timestamp} (UTC) FILETIME=[{rand}:{rand}]
 X-AWMessage: {rand}-{rand}-{rand}-{rand}-{rand}
-X_Id: {num}:{timestamp}:jeffreymkatz@yahoo.com
+X_Id: {num}:{timestamp}:{to}
 X-Subscription: Subscribed on {timestamp}, via {rand}
 X-Mailer: {rand}
 X-Campaign-ID: {num}
