@@ -1,4 +1,4 @@
--<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Email Creative Generator</title>
@@ -9,29 +9,32 @@
             let additionalContent = "";
 
             while (additionalContent.length < contentLength) {
-                additionalContent += `
-                    <div class="random-class-${randomId()}" style="display:none">&nbsp;</div>
-                    <span class="hidden-${randomId()}" style="display:none">&nbsp;</span>
-                    <marquee direction="left" style="display:none">&nbsp;</marquee>
-                    <hr style="display:none">
-                    <table border="${randomId() % 3}" style="display:none">
-                        <tr>
-                            <td>&nbsp;</td><td>&nbsp;</td>
-                        </tr>
-                    </table>
-                    <iframe src="about:blank" width="${randomId() % 50}" height="${randomId() % 50}" style="display:none"></iframe>
-                    <details style="display:none"><summary>&nbsp;</summary><p>&nbsp;</p></details>
-                    <ul style="display:none">
-                        <li>&nbsp;</li>
-                        <li>&nbsp;</li>
-                    </ul>
-                    <svg width="10" height="10" style="display:none">
-                        <circle cx="5" cy="5" r="5" fill="rgb(${randomId()}, ${randomId()}, ${randomId()})" />
-                    </svg>
-                    <div class="spacer-${randomId()}" style="display:none">&nbsp;</div>
-                `;
-            }
-
+        additionalContent += 
+            '<table class="random-class-' + randomId() + '" style="width:100%; border:none; display:none;">' +
+                '<tr><td>&nbsp;</td></tr>' +  // Spacer Row
+            '</table>' +
+            '<table class="hidden-' + randomId() + '" style="width:100%; border:none; display:none;">' +
+                '<tr><td>&nbsp;</td></tr>' +  // Hidden Row
+            '</table>' +
+            '<table style="width:100%; border:none; display:none;">' +
+                '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +  // Extra Empty Cells
+            '</table>' +
+            '<table style="width:100%; border:1px solid #ccc; display:none;">' + 
+                '<tr><td><img src="" alt="useless image" style="display:none; width:100%; height:auto; border:none;" /></td></tr>' + // Image as filler
+            '</table>' +
+            '<table style="width:100%; border:none; display:none;">' +
+                '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>' + // More Empty Cells
+            '</table>' +
+            '<table style="width:100%; border:none; display:none;">' +
+                '<tr><td><p>&nbsp;</p></td></tr>' + // Hidden Text Paragraph
+            '</table>' +
+            '<table style="width:100%; border:none; display:none;">' +
+                '<tr><td style="height:10px;">&nbsp;</td></tr>' + // Spacer
+            '</table>' +
+            '<table style="width:100%; border:none; display:none;">' +
+                '<tr><td>&#8203;</td></tr>' + // Zero Width Space
+            '</table>';
+    }
             let baseTemplate = `
                 <html>
                 <head>
@@ -46,14 +49,14 @@
                 </style>
                 </head>
                 <body>
+                ${additionalContent}
                 <center>
                 <table>
-                ${additionalContent}
                 <a href="https://{domain}/{lpurl}">
                 <img src="https://{domain}/{lp_image}">
                 </a>
-                <br>
                 ${additionalContent}
+                <br>
                 <a href="https://{domain}/{opurl}">
                 <img src="https://{domain}/{op_image}">
                 </a>
@@ -63,6 +66,7 @@
                 <img src="https://{domain}/{ipurl}" width="1" height="1" />
                 </table>
                 </center>
+                ${additionalContent}
                 </body>
                 </html>
             `;
@@ -94,3 +98,6 @@
 </body>
 
 </html>
+
+
+
